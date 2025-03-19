@@ -1,0 +1,63 @@
+auto lo
+iface lo inet loopback
+
+auto ens18
+iface ens18 inet static
+        address xxx.xxx.xxx.xxx/24
+        gateway xxx.xxx.xxx.1
+        post-up echo 1 > /proc/sys/net/ipv4/ip_forward
+        post-up iptables -t nat -A PREROUTING -i ens18 -p tcp -m multiport ! --dport 22,8006 -j DNAT --to 10.0.10.252
+        post-up iptables -t nat -A PREROUTING -i ens18 -p udp -j DNAT --to 10.0.10.252
+#Network Infrastructure
+		
+auto vmbr100
+iface vmbr100 inet static
+        address 10.0.100.254/24
+        bridge-ports none
+        bridge-stp off
+        bridge-fd 0
+        post-up iptables -t nat -A POSTROUTING -s '10.0.100.0/24' -o ens18 -j MASQUERADE
+        post-down iptables -t nat -D POSTROUTING -s '10.0.100.0/24' -o ens18 -j MASQUERADE
+#Network 10.0.100.1
+
+auto vmbr170
+iface vmbr170 inet static
+        address 10.0.170.254/24
+        bridge-ports none
+        bridge-stp off
+        bridge-fd 0
+        post-up iptables -t nat -A POSTROUTING -s '10.0.170.0/24' -o ens18 -j MASQUERADE
+        post-down iptables -t nat -D POSTROUTING -s '10.0.170.0/24' -o ens18 -j MASQUERADE		
+#Network 10.0.170.1
+
+auto vmbr190
+iface vmbr190 inet static
+        address 10.0.190.254/24
+        bridge-ports none
+        bridge-stp off
+        bridge-fd 0
+        post-up iptables -t nat -A POSTROUTING -s '10.0.190.0/24' -o ens18 -j MASQUERADE
+        post-down iptables -t nat -D POSTROUTING -s '10.0.190.0/24' -o ens18 -j MASQUERADE		
+#Network 10.0.190.1
+
+auto vmbr200
+iface vmbr200 inet static
+        address 10.0.200.254/24
+        bridge-ports none
+        bridge-stp off
+        bridge-fd 0
+        post-up iptables -t nat -A POSTROUTING -s '10.0.200.0/24' -o ens18 -j MASQUERADE
+        post-down iptables -t nat -D POSTROUTING -s '10.0.200.0/24' -o ens18 -j MASQUERADE		
+#Network 10.0.200.1
+
+auto vmbr999
+iface vmbr999 inet static
+        address 10.10.10.254/24
+        bridge-ports none
+        bridge-stp off
+        bridge-fd 0
+        post-up iptables -t nat -A POSTROUTING -s '10.10.10.0/24' -o ens18 -j MASQUERADE
+        post-down iptables -t nat -D POSTROUTING -s '10.10.10.0/24' -o ens18 -j MASQUERADE		
+#Network 10.10.10.1
+
+source /etc/network/interfaces.d/*
